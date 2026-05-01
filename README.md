@@ -3,7 +3,6 @@
 ## 部署案例
 
 **平台**: Incudal.com Alpine Linux VPS（256MB RAM）
-**IP**: 149.56.18.147
 **架構**: Python + requests + sqlite3（非 aiogram，記憶體不夠）
 
 ## 成功部署指令
