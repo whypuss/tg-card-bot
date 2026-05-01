@@ -5,6 +5,8 @@ TG Card Bot - Inline Buttons + Manual Confirmation
 """
 import os, sys, time, random, sqlite3, re, json
 import requests
+from dotenv import load_dotenv
+load_dotenv("/root/tg-card-bot/.env")
 
 BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
