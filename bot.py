@@ -10,8 +10,9 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN_HERE")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "0"))
 DB_PATH = "/root/tg-card-bot/cards.db"
 
-# stdout flush for nohup
-print = lambda *a, **kw: (print(*a, **kw), sys.stdout.flush())
+def log(*a, **kw):
+    print(*a, **kw)
+    sys.stdout.flush()
 
 # ============ DB ============
 def db_exec(sql, args=()):
@@ -60,7 +61,7 @@ def api(method, data=None):
         r = requests.post(url, json=data, timeout=10)
         return r.json()
     except Exception as e:
-        print(f"[api error] {e}")
+        log(f"[api error] {e}")
         return None
 
 def send_msg(chat_id, text, reply_markup=None, parse_mode=None):
@@ -71,7 +72,7 @@ def send_msg(chat_id, text, reply_markup=None, parse_mode=None):
         payload["parse_mode"] = parse_mode
     result = api("sendMessage", payload)
     if result and not result.get("ok"):
-        print(f"[send_msg failed] {result}")
+        log(f"[send_msg failed] {result}")
     return result
 
 def edit_msg(chat_id, msg_id, text, reply_markup=None, parse_mode=None):
@@ -371,7 +372,7 @@ def handle_callback(cb):
 # ============ Main Loop ============
 def main():
     init_db()
-    print(f"🤖 Bot 啟動，ADMIN={ADMIN_ID}")
+    log(f"🤖 Bot 啟動，ADMIN={ADMIN_ID}")
     offset = None
     while True:
         try:
@@ -384,11 +385,11 @@ def main():
             )
             data = resp.json()
             if not data.get("ok"):
-                print(f"[api error] {data}")
+                log(f"[api error] {data}")
                 time.sleep(5); continue
             updates = data.get("result", [])
             if updates:
-                print(f"[收到 {len(updates)} 個更新]")
+                log(f"[收到 {len(updates)} 個更新]")
             for u in updates:
                 offset = u["update_id"] + 1
                 try:
@@ -398,13 +399,13 @@ def main():
                         handle_message(u["message"])
                 except Exception as e:
                     import traceback
-                    print(f"[handler error] {e}\n{traceback.format_exc()}")
+                    log(f"[handler error] {e}\n{traceback.format_exc()}")
             time.sleep(0.3)
         except requests.exceptions.ReadTimeout:
             continue
         except Exception as e:
             import traceback
-            print(f"[loop error] {e}\n{traceback.format_exc()}")
+            log(f"[loop error] {e}\n{traceback.format_exc()}")
             time.sleep(5)
 
 if __name__ == "__main__":
