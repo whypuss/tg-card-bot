@@ -243,7 +243,7 @@ def handle_callback(cb):
     chat_id = cb["message"]["chat"]["id"]
     msg_id = cb["message"]["message_id"]
 
-    if data == "home" or data == "list_all":
+    if data in ("list_all", "home"):
         rows = db_query("SELECT id, name, price, stock FROM products WHERE price > 0", one=False)
         if not rows:
             edit_msg(chat_id, msg_id, "📦 暫無商品", reply_markup=main_menu_kb())
